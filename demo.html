@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+<style type="text/css">
+  .enter-active,
+  .leave-active {
+    transition: opacity .5s, transform .5s;
+  }
+
+  .leave-active {
+    position: absolute;
+  }
+
+  .enter-from,
+  .leave-to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  .move {
+    transition: transform .5s;
+  }
+</style>
+
+<button onclick="add()">Add</button>
+<button onclick="remove()">Remove</button>
+<button onclick="shuffle()">Shuffle</button>
+
+<ul id="list"></ul>
+
+<script src="dist/index.js"></script>
+<script>
+  const list = document.getElementById('list');
+  let index = 1;
+
+  function createItem() {
+    const li = document.createElement('li');
+    li.textContent = 'Item ' + index++;
+    return li;
+  }
+
+  function add() {
+    const li = createItem();
+    helloGoodbye.move(list.children, () => {
+      if (list.children.length) {
+        const child = list.children[Math.floor(Math.random() * list.children.length)];
+        list.insertBefore(li, child);
+      } else {
+        list.appendChild(li);
+      }
+      helloGoodbye.hello(li);
+    });
+  }
+
+  function remove() {
+    const children = list.querySelectorAll('*:not(.leave-active)');
+    if (! children.length) return;
+    const child = children[Math.floor(Math.random() * children.length)];
+    helloGoodbye.move(Array.from(children).filter(el => el !== child), () => {
+      helloGoodbye.goodbye(child, {
+        finish: () => list.removeChild(child)
+      });
+    });
+  }
+
+  function shuffle() {
+    helloGoodbye.move(list.children, () => {
+      for (let i = list.children.length; i >= 0; i--) {
+        list.appendChild(list.children[Math.random() * i | 0]);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
