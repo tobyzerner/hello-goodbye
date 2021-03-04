@@ -66,26 +66,26 @@ move(parent.children, () => {
 .move { transition: transform .5s }
 ```
 
-### `animate`
+### `transition`
 
-Run a named animation on an element. Used under the hood by `hello` and `goodbye`.
+Run a named transition on an element. Used under the hood by `hello` and `goodbye`.
 
 1. The `${name}-active` and `${name}-from` classes are added
 2. Next frame: the `${name}-from` class is removed, and the `${name}-to` class is added
 3. When the transition ends: all classes are removed and the `finish` callback is called
 
 ```ts
-import { animate } from 'hello-goodbye';
+import { transition } from 'hello-goodbye';
 
-animate(
+transition(
     el: HTMLElement,
     name: string,
-    options?: AnimationOptions
+    options?: TransitionOptions
 );
 
-type AnimationOptions = {
+type TransitionOptions = {
     finish?: Function, // called when the transition ends
-    classPrefix?: string // optional prefix for animation class names
+    prefix?: string // optional prefix for animation class names
 };
 ```
 

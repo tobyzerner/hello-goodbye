@@ -4,8 +4,9 @@
 
 <style type="text/css">
   .enter-active,
-  .leave-active {
-    transition: opacity .5s, transform .5s;
+  .leave-active,
+  .move {
+    transition: all 1s;
   }
 
   .leave-active {
@@ -15,11 +16,7 @@
   .enter-from,
   .leave-to {
     opacity: 0;
-    transform: translateY(-100%);
-  }
-
-  .move {
-    transition: transform .5s;
+    transform: translateX(-30px);
   }
 </style>
 

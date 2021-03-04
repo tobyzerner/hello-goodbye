@@ -1,14 +1,18 @@
-type AnimationOptions = {
+type TransitionOptions = {
     finish?: Function,
-    classPrefix?: string
+    prefix?: string
 };
 
-export function move(elements: HTMLCollection | Element[], cb: Function, options: AnimationOptions = {}) {
+function forceReflow(): void {
+    void document.body.offsetWidth;
+}
+
+export function move(elements: HTMLCollection | HTMLElement[], cb: Function, options: TransitionOptions = {}) {
     const rects = new WeakMap<Element, DOMRect>();
     const prefix = getPrefix(options);
 
     if (elements instanceof HTMLCollection) {
-        elements = Array.from(elements);
+        elements = Array.from(elements) as HTMLElement[];
     }
 
     elements.forEach(el => {
@@ -19,47 +23,69 @@ export function move(elements: HTMLCollection | Element[], cb: Function, options
 
     elements.forEach(el => {
         const rect = rects.get(el)!;
-        const top = rect.top - el.getBoundingClientRect().top;
-        const left = rect.left - el.getBoundingClientRect().left;
+        const dx = rect.left - el.getBoundingClientRect().left;
+        const dy = rect.top - el.getBoundingClientRect().top;
+
+        if (! dx && ! dy) return;
+
         const style = (el as HTMLElement).style;
         style.transitionDuration = '0s';
-        style.transform = `translate(${left}px, ${top}px)`;
+        style.transform = `translate(${dx}px, ${dy}px)`;
 
-        nextFrame(() => {
-            el.classList.add(prefix + 'move');
-            style.transitionDuration = style.transform = '';
-            whenTransitionEnds(el, () => {
-                el.classList.remove(prefix + 'move');
-            });
+        forceReflow();
+
+        style.transitionDuration = style.transform = '';
+        el.classList.add(prefix + 'move');
+        whenTransitionEnds(el, () => {
+            el.classList.remove(prefix + 'move');
         });
     });
 }
 
-export function animate(el: HTMLElement, name: string, options: AnimationOptions = {}) {
-    const prefix = getPrefix(options);
+function cancel(el: HTMLElement) {
+    if ((el as any)._currentTransition) {
+        el.classList.remove(
+            ...['active', 'from', 'to'].map(c => (el as any)._currentTransition + c)
+        );
+    }
 
-    el.classList.add(prefix + name + '-active');
-    el.classList.add(prefix + name + '-from');
-    el.classList.remove(prefix + 'move');
+    clearPendingCb(el);
+}
+
+function clearPendingCb(el: HTMLElement) {
+    if ((el as any)._pendingCb) {
+        el.removeEventListener('transitionend', (el as any)._pendingCb);
+        (el as any)._pendingCb = null;
+    }
+}
+
+export function transition(el: HTMLElement, name: string, options: TransitionOptions = {}) {
+    const prefix = getPrefix(options) + name + '-';
+    const cl = el.classList;
+
+    cancel(el);
+    (el as any)._currentTransition = prefix;
+
+    cl.add(prefix + 'active', prefix + 'from');
 
     nextFrame(() => {
-        el.classList.add(prefix + name + '-to');
-        el.classList.remove(prefix + name + '-from');
+        cl.add(prefix + 'to');
+        cl.remove(prefix + 'from');
 
         whenTransitionEnds(el, () => {
-            el.classList.remove(prefix + name + '-active');
-            el.classList.remove(prefix + name + '-to');
+            cl.remove(prefix + 'to', prefix + 'active');
             options.finish && options.finish();
+            (el as any)._currentTransition = null;
         });
     });
 }
 
-export function hello(el: HTMLElement, options: AnimationOptions = {}) {
-    animate(el, 'enter', options);
+export function hello(el: HTMLElement, options: TransitionOptions = {}) {
+    transition(el, 'enter', options);
 }
 
-export function goodbye(el: HTMLElement, options: AnimationOptions = {}) {
-    animate(el, 'leave', options);
+export function goodbye(el: HTMLElement, options: TransitionOptions = {}) {
+    transition(el, 'leave', options);
 }
 
 function nextFrame(cb: () => void) {
@@ -68,18 +94,18 @@ function nextFrame(cb: () => void) {
     });
 }
 
-function whenTransitionEnds(el: Element, resolve: () => void) {
+function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
     if (getComputedStyle(el).transitionDuration.startsWith('0s')) {
         resolve();
     } else {
-        const end = () => {
+        const cb = (el as any)._pendingCb = () => {
             resolve();
-            el.removeEventListener('transitionend', end);
+            clearPendingCb(el);
         };
-        el.addEventListener('transitionend', end);
+        el.addEventListener('transitionend', cb);
     }
 }
 
-function getPrefix(options?: AnimationOptions) {
-    return options.classPrefix ? options.classPrefix + '-' : '';
+function getPrefix(options?: TransitionOptions) {
+    return options.prefix ? options.prefix + '-' : '';
 }
