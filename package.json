@@ -1,6 +1,6 @@
 {
   "name": "hello-goodbye",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Tiny library to apply enter, leave, and move transitions to DOM elements.",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
@@ -27,6 +27,7 @@
     "README.md",
     "!**/.DS_Store"
   ],
+  "sideEffects": false,
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.1.0",
     "rollup": "^2.36.2",

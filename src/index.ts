@@ -47,15 +47,7 @@ function cancel(el: HTMLElement) {
         el.classList.remove(
             ...['active', 'from', 'to'].map(c => (el as any)._currentTransition + c)
         );
-    }
-
-    clearPendingCb(el);
-}
-
-function clearPendingCb(el: HTMLElement) {
-    if ((el as any)._pendingCb) {
-        el.removeEventListener('transitionend', (el as any)._pendingCb);
-        (el as any)._pendingCb = null;
+        (el as any)._currentTransition = null;
     }
 }
 
@@ -74,8 +66,11 @@ export function transition(el: HTMLElement, name: string, options: TransitionOpt
 
         whenTransitionEnds(el, () => {
             cl.remove(prefix + 'to', prefix + 'active');
-            options.finish && options.finish();
-            (el as any)._currentTransition = null;
+
+            if ((el as any)._currentTransition === prefix) {
+                options.finish && options.finish();
+                (el as any)._currentTransition = null;
+            }
         });
     });
 }
@@ -98,10 +93,11 @@ function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
     if (getComputedStyle(el).transitionDuration.startsWith('0s')) {
         resolve();
     } else {
-        const cb = (el as any)._pendingCb = () => {
+        const cb = () => {
             resolve();
-            clearPendingCb(el);
+            el.removeEventListener('transitionend', cb);
         };
+
         el.addEventListener('transitionend', cb);
     }
 }
