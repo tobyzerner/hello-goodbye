@@ -16,16 +16,19 @@ export function move(elements: HTMLCollection | HTMLElement[], cb: Function, opt
     }
 
     elements.forEach(el => {
-        rects.set(el, el.getBoundingClientRect());
+        if (getComputedStyle(el).display !== 'none') {
+            rects.set(el, el.getBoundingClientRect());
+        }
     });
 
     cb();
 
     elements.forEach(el => {
-        const rect = rects.get(el)!;
+        const rect = rects.get(el);
+        if (! rect) return;
+
         const dx = rect.left - el.getBoundingClientRect().left;
         const dy = rect.top - el.getBoundingClientRect().top;
-
         if (! dx && ! dy) return;
 
         const style = (el as HTMLElement).style;
