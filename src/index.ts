@@ -45,7 +45,7 @@ export function move(elements: HTMLCollection | HTMLElement[], cb: Function, opt
     });
 }
 
-function cancel(el: HTMLElement) {
+export function cancel(el: HTMLElement) {
     if ((el as any)._currentTransition) {
         el.classList.remove(
             ...['active', 'from', 'to'].map(c => (el as any)._currentTransition + c)

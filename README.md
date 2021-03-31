@@ -89,6 +89,16 @@ type TransitionOptions = {
 };
 ```
 
+### `cancel`
+
+Cancel any currently-running transition on an element.
+
+```ts
+import { cancel } from 'hello-goodbye';
+
+cancel(el: HTMLElement);
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
