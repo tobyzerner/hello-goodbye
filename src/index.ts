@@ -99,9 +99,11 @@ function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
         const cb = () => {
             resolve();
             el.removeEventListener('transitionend', cb);
+            el.removeEventListener('transitioncancel', cb);
         };
 
         el.addEventListener('transitionend', cb);
+        el.addEventListener('transitioncancel', cb);
     }
 }
 
