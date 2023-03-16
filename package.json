@@ -1,6 +1,6 @@
 {
     "name": "hello-goodbye",
-    "version": "0.1.0-beta.5",
+    "version": "0.1.0",
     "description": "Tiny library to apply enter, leave, and move transitions to DOM elements.",
     "module": "dist/hello-goodbye.js",
     "type": "module",

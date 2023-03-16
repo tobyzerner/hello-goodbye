@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.0-beta.5...v0.1.0) (2023-03-16)
+
+
+### Bug Fixes
+
+* improve transition reliability ([ff861b5](https://github.com/tobyzerner/hello-goodbye/commit/ff861b5b6fab7b5cd2dfb7d7d06f90c40c8d9d62))
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
