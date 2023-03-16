@@ -1,5 +1,7 @@
 # Changelog
 
+### [0.1.1](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.0...v0.1.1) (2023-03-16)
+
 ## [0.1.0](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.0-beta.5...v0.1.0) (2023-03-16)
 ### Breaking Changes
 * Package is now ES module only
