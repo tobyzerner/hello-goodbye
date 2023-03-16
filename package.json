@@ -15,7 +15,7 @@
         "dev": "vite",
         "build": "tsc --noEmit && vite build && tsc --emitDeclarationOnly",
         "preview": "vite preview",
-        "release": "release-it --npm.tag=latest"
+        "release": "release-it"
     },
     "devDependencies": {
         "@release-it/conventional-changelog": "^5.1.1",
