@@ -1,13 +1,17 @@
 type TransitionOptions = {
-    finish?: Function,
-    prefix?: string
+    finish?: Function;
+    prefix?: string;
 };
 
 function forceReflow(): void {
     void document.body.offsetWidth;
 }
 
-export function move(elements: HTMLCollection | HTMLElement[], cb: Function, options: TransitionOptions = {}) {
+export function move(
+    elements: HTMLCollection | HTMLElement[],
+    cb: Function,
+    options: TransitionOptions = {}
+) {
     const rects = new WeakMap<Element, DOMRect>();
     const prefix = getPrefix(options);
 
@@ -15,7 +19,7 @@ export function move(elements: HTMLCollection | HTMLElement[], cb: Function, opt
         elements = Array.from(elements) as HTMLElement[];
     }
 
-    elements.forEach(el => {
+    elements.forEach((el) => {
         if (getComputedStyle(el).display !== 'none') {
             rects.set(el, el.getBoundingClientRect());
         }
@@ -23,24 +27,24 @@ export function move(elements: HTMLCollection | HTMLElement[], cb: Function, opt
 
     cb();
 
-    elements.forEach(el => {
+    elements.forEach((el) => {
         const rect = rects.get(el);
-        if (! rect) return;
+        if (!rect) return;
 
         const dx = rect.left - el.getBoundingClientRect().left;
         const dy = rect.top - el.getBoundingClientRect().top;
-        if (! dx && ! dy) return;
+        if (!dx && !dy) return;
 
         const style = (el as HTMLElement).style;
         style.transitionDuration = '0s';
         style.transform = `translate(${dx}px, ${dy}px)`;
 
-        forceReflow();
-
-        style.transitionDuration = style.transform = '';
-        el.classList.add(prefix + 'move');
-        whenTransitionEnds(el, () => {
-            el.classList.remove(prefix + 'move');
+        requestAnimationFrame(() => {
+            el.classList.add(prefix + 'move');
+            style.transitionDuration = style.transform = '';
+            whenTransitionEnds(el, () => {
+                el.classList.remove(prefix + 'move');
+            });
         });
     });
 }
@@ -48,13 +52,19 @@ export function move(elements: HTMLCollection | HTMLElement[], cb: Function, opt
 export function cancel(el: HTMLElement) {
     if ((el as any)._currentTransition) {
         el.classList.remove(
-            ...['active', 'from', 'to'].map(c => (el as any)._currentTransition + c)
+            ...['active', 'from', 'to'].map(
+                (c) => (el as any)._currentTransition + c
+            )
         );
         (el as any)._currentTransition = null;
     }
 }
 
-export function transition(el: HTMLElement, name: string, options: TransitionOptions = {}) {
+export function transition(
+    el: HTMLElement,
+    name: string,
+    options: TransitionOptions = {}
+) {
     const prefix = getPrefix(options) + name + '-';
     const cl = el.classList;
 
@@ -63,18 +73,18 @@ export function transition(el: HTMLElement, name: string, options: TransitionOpt
 
     cl.add(prefix + 'active', prefix + 'from');
 
-    nextFrame(() => {
-        cl.add(prefix + 'to');
-        cl.remove(prefix + 'from');
+    forceReflow();
 
-        whenTransitionEnds(el, () => {
-            cl.remove(prefix + 'to', prefix + 'active');
+    cl.add(prefix + 'to');
+    cl.remove(prefix + 'from');
 
-            if ((el as any)._currentTransition === prefix) {
-                options.finish && options.finish();
-                (el as any)._currentTransition = null;
-            }
-        });
+    whenTransitionEnds(el, () => {
+        cl.remove(prefix + 'to', prefix + 'active');
+
+        if ((el as any)._currentTransition === prefix) {
+            options.finish && options.finish();
+            (el as any)._currentTransition = null;
+        }
     });
 }
 
@@ -84,12 +94,6 @@ export function hello(el: HTMLElement, options: TransitionOptions = {}) {
 
 export function goodbye(el: HTMLElement, options: TransitionOptions = {}) {
     transition(el, 'leave', options);
-}
-
-function nextFrame(cb: () => void) {
-    requestAnimationFrame(() => {
-        requestAnimationFrame(cb);
-    });
 }
 
 function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
@@ -108,5 +112,5 @@ function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
 }
 
 function getPrefix(options?: TransitionOptions) {
-    return options.prefix ? options.prefix + '-' : '';
+    return options?.prefix ? options.prefix + '-' : '';
 }
