@@ -1,10 +1,10 @@
 # Hello Goodbye
 
-Tiny library to apply **enter**, **leave**, and **move** transitions to DOM elements. Inspired by Vue's [`<transition>`](https://v3.vuejs.org/guide/transitions-enterleave.html) and [`<transition-group>`](https://v3.vuejs.org/guide/transitions-list.html#list-transitions) components, but in plain DOM.
+Tiny library to apply **enter**, **leave**, and **move** transitions to DOM elements. Inspired by Vue's [`<transition>`](https://vuejs.org/guide/built-ins/transition.html) and [`<transition-group>`](https://vuejs.org/guide/built-ins/transition-group.html) components, but in plain DOM.
 
 ![Size](https://img.shields.io/bundlephobia/minzip/hello-goodbye)
 
-[**Demo**](https://tobyzerner.github.io/hello-goodbye/demo.html)
+[**Demo**](https://tobyzerner.github.io/hello-goodbye/index.html)
 
 ## Installation
 

@@ -1,8 +1,8 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <body>
 
-<style type="text/css">
+<style>
   .enter-active,
   .leave-active,
   .move {
@@ -26,8 +26,9 @@
 
 <ul id="list"></ul>
 
-<script src="dist/index.js"></script>
-<script>
+<script type="module">
+  import { hello, goodbye, move } from 'https://unpkg.com/hello-goodbye?module'; // './src/index.ts';
+
   const list = document.getElementById('list');
   let index = 1;
 
@@ -37,32 +38,32 @@
     return li;
   }
 
-  function add() {
+  window.add = () => {
     const li = createItem();
-    helloGoodbye.move(list.children, () => {
+    move(list.children, () => {
       if (list.children.length) {
         const child = list.children[Math.floor(Math.random() * list.children.length)];
         list.insertBefore(li, child);
       } else {
         list.appendChild(li);
       }
-      helloGoodbye.hello(li);
+      hello(li);
     });
   }
 
-  function remove() {
+  window.remove = () => {
     const children = list.querySelectorAll('*:not(.leave-active)');
     if (! children.length) return;
     const child = children[Math.floor(Math.random() * children.length)];
-    helloGoodbye.move(Array.from(children).filter(el => el !== child), () => {
-      helloGoodbye.goodbye(child, {
+    move(Array.from(children).filter(el => el !== child), () => {
+      goodbye(child, {
         finish: () => list.removeChild(child)
       });
     });
   }
 
-  function shuffle() {
-    helloGoodbye.move(list.children, () => {
+  window.shuffle = () => {
+    move(list.children, () => {
       for (let i = list.children.length; i >= 0; i--) {
         list.appendChild(list.children[Math.random() * i | 0]);
       }

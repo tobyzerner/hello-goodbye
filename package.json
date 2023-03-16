@@ -1,55 +1,49 @@
 {
-  "name": "hello-goodbye",
-  "version": "0.1.0-beta.5",
-  "description": "Tiny library to apply enter, leave, and move transitions to DOM elements.",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.es.js",
-  "unpkg": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c",
-    "build:watch": "rollup -cw",
-    "release": "release-it"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tobyzerner/hello-goodbye.git"
-  },
-  "author": "Toby Zerner",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tobyzerner/hello-goodbye/issues"
-  },
-  "homepage": "https://github.com/tobyzerner/hello-goodbye#readme",
-  "files": [
-    "dist",
-    "src",
-    "README.md",
-    "!**/.DS_Store"
-  ],
-  "sideEffects": false,
-  "devDependencies": {
-    "@release-it/keep-a-changelog": "^2.2.2",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "release-it": "^14.5.0",
-    "rollup": "^2.42.4",
-    "rollup-plugin-filesize": "^9.1.1",
-    "rollup-plugin-terser": "^7.0.2",
-    "tslib": "^2.1.0",
-    "typescript": "^4.2.3"
-  },
-  "release-it": {
-    "github": {
-      "release": true
+    "name": "hello-goodbye",
+    "version": "0.1.0-beta.5",
+    "description": "Tiny library to apply enter, leave, and move transitions to DOM elements.",
+    "module": "dist/hello-goodbye.js",
+    "type": "module",
+    "types": "dist/types/index.d.ts",
+    "license": "MIT",
+    "repository": "tobyzerner/hello-goodbye",
+    "files": [
+        "dist"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc --noEmit && vite build && tsc --emitDeclarationOnly",
+        "preview": "vite preview",
+        "release": "release-it --npm.tag=latest"
     },
-    "plugins": {
-      "@release-it/keep-a-changelog": {
-        "filename": "CHANGELOG.md"
-      }
+    "devDependencies": {
+        "@release-it/conventional-changelog": "^5.1.1",
+        "prettier": "^2.8.4",
+        "release-it": "^15.9.0",
+        "typescript": "^5.0.2",
+        "vite": "^4.2.0"
     },
-    "hooks": {
-      "after:bump": "npm run build"
+    "release-it": {
+        "git": {
+            "commitMessage": "release: v${version}",
+            "tagName": "v${version}"
+        },
+        "github": {
+            "release": true,
+            "releaseName": "v${version}"
+        },
+        "plugins": {
+            "@release-it/conventional-changelog": {
+                "preset": "conventionalcommits",
+                "infile": "CHANGELOG.md"
+            }
+        },
+        "hooks": {
+            "after:bump": "npm run build"
+        }
+    },
+    "prettier": {
+        "singleQuote": true
     }
-  }
 }
