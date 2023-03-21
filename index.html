@@ -18,6 +18,17 @@
     opacity: 0;
     transform: translateX(-30px);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 
 <button onclick="add()">Add</button>
@@ -56,9 +67,7 @@
     if (! children.length) return;
     const child = children[Math.floor(Math.random() * children.length)];
     move(Array.from(children).filter(el => el !== child), () => {
-      goodbye(child, {
-        finish: () => list.removeChild(child)
-      });
+      goodbye(child).then(() => list.removeChild(child));
     });
   }
 

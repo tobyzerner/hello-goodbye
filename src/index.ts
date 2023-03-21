@@ -1,11 +1,6 @@
 type TransitionOptions = {
-    finish?: Function;
     prefix?: string;
 };
-
-function forceReflow(): void {
-    void document.body.offsetWidth;
-}
 
 export function move(
     elements: HTMLCollection | HTMLElement[],
@@ -39,12 +34,11 @@ export function move(
         style.transitionDuration = '0s';
         style.transform = `translate(${dx}px, ${dy}px)`;
 
-        requestAnimationFrame(() => {
+        requestAnimationFrame(async () => {
             el.classList.add(prefix + 'move');
             style.transitionDuration = style.transform = '';
-            whenTransitionEnds(el, () => {
-                el.classList.remove(prefix + 'move');
-            });
+            await transitionEnd(el);
+            el.classList.remove(prefix + 'move');
         });
     });
 }
@@ -60,7 +54,7 @@ export function cancel(el: HTMLElement) {
     }
 }
 
-export function transition(
+export async function transition(
     el: HTMLElement,
     name: string,
     options: TransitionOptions = {}
@@ -78,39 +72,52 @@ export function transition(
     cl.add(prefix + 'to');
     cl.remove(prefix + 'from');
 
-    whenTransitionEnds(el, () => {
-        cl.remove(prefix + 'to', prefix + 'active');
+    await transitionEnd(el);
 
-        if ((el as any)._currentTransition === prefix) {
-            options.finish && options.finish();
-            (el as any)._currentTransition = null;
-        }
-    });
+    cl.remove(prefix + 'to', prefix + 'active');
+
+    if ((el as any)._currentTransition === prefix) {
+        (el as any)._currentTransition = null;
+    }
 }
 
 export function hello(el: HTMLElement, options: TransitionOptions = {}) {
-    transition(el, 'enter', options);
+    return transition(el, 'enter', options);
 }
 
 export function goodbye(el: HTMLElement, options: TransitionOptions = {}) {
-    transition(el, 'leave', options);
+    return transition(el, 'leave', options);
 }
 
-function whenTransitionEnds(el: HTMLElement, resolve: () => void) {
-    if (getComputedStyle(el).transitionDuration.startsWith('0s')) {
-        resolve();
-    } else {
-        const cb = () => {
-            resolve();
-            el.removeEventListener('transitionend', cb);
-            el.removeEventListener('transitioncancel', cb);
-        };
+function nextFrame() {
+    return new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+}
 
-        el.addEventListener('transitionend', cb);
-        el.addEventListener('transitioncancel', cb);
-    }
+async function transitionEnd(el: HTMLElement) {
+    if (getComputedStyle(el).transitionDuration.startsWith('0s')) return;
+    let started = false;
+    const onStart = () => (started = true);
+    el.addEventListener('transitionstart', onStart);
+    await nextFrame();
+    el.removeEventListener('transitionstart', onStart);
+    if (!started) return;
+    return new Promise<void>((resolve) => {
+        const onEnd = () => {
+            resolve();
+            el.removeEventListener('transitionend', onEnd);
+            el.removeEventListener('transitioncancel', onEnd);
+        };
+        el.addEventListener('transitionend', onEnd);
+        el.addEventListener('transitioncancel', onEnd);
+    });
 }
 
 function getPrefix(options?: TransitionOptions) {
     return options?.prefix ? options.prefix + '-' : '';
+}
+
+function forceReflow(): void {
+    void document.body.offsetWidth;
 }

@@ -37,9 +37,7 @@ Apply a **leave** transition to an element and remove it when finished.
 ```ts
 import { goodbye } from 'hello-goodbye';
 
-goodbye(el, {
-    finish: () => parent.removeChild(el)
-});
+goodbye(el).then(() => parent.removeChild(el));
 ```
 
 ```css
@@ -72,7 +70,7 @@ Run a named transition on an element. Used under the hood by `hello` and `goodby
 
 1. The `${name}-active` and `${name}-from` classes are added
 2. Next frame: the `${name}-from` class is removed, and the `${name}-to` class is added
-3. When the transition ends: all classes are removed and the `finish` callback is called
+3. When the transition ends: all classes are removed and the returned Promise resolves
 
 ```ts
 import { transition } from 'hello-goodbye';
@@ -81,10 +79,9 @@ transition(
     el: HTMLElement,
     name: string,
     options?: TransitionOptions
-);
+): Promise<void>;
 
 type TransitionOptions = {
-    finish?: Function, // called when the transition ends
     prefix?: string // optional prefix for animation class names
 };
 ```
