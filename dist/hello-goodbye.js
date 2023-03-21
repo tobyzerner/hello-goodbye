@@ -1,61 +1,65 @@
-function v() {
-  document.body.offsetWidth;
-}
-function x(t, n, e = {}) {
-  const i = /* @__PURE__ */ new WeakMap(), o = m(e);
-  t instanceof HTMLCollection && (t = Array.from(t)), t.forEach((r) => {
-    getComputedStyle(r).display !== "none" && i.set(r, r.getBoundingClientRect());
-  }), n(), t.forEach((r) => {
-    const c = i.get(r);
-    if (!c)
+function L(t, r, o = {}) {
+  const n = /* @__PURE__ */ new WeakMap(), i = m(o);
+  t instanceof HTMLCollection && (t = Array.from(t)), t.forEach((e) => {
+    getComputedStyle(e).display !== "none" && n.set(e, e.getBoundingClientRect());
+  }), r(), t.forEach((e) => {
+    const s = n.get(e);
+    if (!s)
       return;
-    const s = c.left - r.getBoundingClientRect().left, f = c.top - r.getBoundingClientRect().top;
-    if (!s && !f)
+    const c = s.left - e.getBoundingClientRect().left, u = s.top - e.getBoundingClientRect().top;
+    if (!c && !u)
       return;
-    const a = r.style;
-    a.transitionDuration = "0s", a.transform = `translate(${s}px, ${f}px)`, requestAnimationFrame(() => {
-      r.classList.add(o + "move"), a.transitionDuration = a.transform = "", d(r, () => {
-        r.classList.remove(o + "move");
-      });
+    const a = e.style;
+    a.transitionDuration = "0s", a.transform = `translate(${c}px, ${u}px)`, requestAnimationFrame(async () => {
+      e.classList.add(i + "move"), a.transitionDuration = a.transform = "", await d(e), e.classList.remove(i + "move");
     });
   });
 }
-function g(t) {
+function v(t) {
   t._currentTransition && (t.classList.remove(
     ...["active", "from", "to"].map(
-      (n) => t._currentTransition + n
+      (r) => t._currentTransition + r
     )
   ), t._currentTransition = null);
 }
-function u(t, n, e = {}) {
-  const i = m(e) + n + "-", o = t.classList;
-  g(t), t._currentTransition = i, o.add(i + "active", i + "from"), v(), o.add(i + "to"), o.remove(i + "from"), d(t, () => {
-    o.remove(i + "to", i + "active"), t._currentTransition === i && (e.finish && e.finish(), t._currentTransition = null);
-  });
+async function f(t, r, o = {}) {
+  const n = m(o) + r + "-", i = t.classList;
+  v(t), t._currentTransition = n, i.add(n + "active", n + "from"), g(), i.add(n + "to"), i.remove(n + "from"), await d(t), i.remove(n + "to", n + "active"), t._currentTransition === n && (t._currentTransition = null);
 }
-function y(t, n = {}) {
-  u(t, "enter", n);
+function x(t, r = {}) {
+  return f(t, "enter", r);
 }
-function L(t, n = {}) {
-  u(t, "leave", n);
+function E(t, r = {}) {
+  return f(t, "leave", r);
 }
-function d(t, n) {
+function y() {
+  return new Promise(
+    (t) => requestAnimationFrame(() => requestAnimationFrame(() => t()))
+  );
+}
+async function d(t) {
   if (getComputedStyle(t).transitionDuration.startsWith("0s"))
-    n();
-  else {
-    const e = () => {
-      n(), t.removeEventListener("transitionend", e), t.removeEventListener("transitioncancel", e);
-    };
-    t.addEventListener("transitionend", e), t.addEventListener("transitioncancel", e);
-  }
+    return;
+  let r = !1;
+  const o = () => r = !0;
+  if (t.addEventListener("transitionstart", o), await y(), t.removeEventListener("transitionstart", o), !!r)
+    return new Promise((n) => {
+      const i = () => {
+        n(), t.removeEventListener("transitionend", i), t.removeEventListener("transitioncancel", i);
+      };
+      t.addEventListener("transitionend", i), t.addEventListener("transitioncancel", i);
+    });
 }
 function m(t) {
   return t != null && t.prefix ? t.prefix + "-" : "";
 }
+function g() {
+  document.body.offsetWidth;
+}
 export {
-  g as cancel,
-  L as goodbye,
-  y as hello,
-  x as move,
-  u as transition
+  v as cancel,
+  E as goodbye,
+  x as hello,
+  L as move,
+  f as transition
 };

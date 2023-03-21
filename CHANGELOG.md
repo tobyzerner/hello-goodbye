@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.1...v0.2.0) (2023-03-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removed `finish` callback from options. Use the Promise returned from `hello` and `goodbye` instead.
+
+### Bug Fixes
+
+* Fix transition end detection in cases where a transition has been defined, but no properties are actually transitioned ([eef3228](https://github.com/tobyzerner/hello-goodbye/commit/eef32285f7b06d0643a5e7a7bab12352724df5bd))
+
 ### [0.1.1](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.0...v0.1.1) (2023-03-16)
 ### Bug Fixes
 * Fix missing library bundle
