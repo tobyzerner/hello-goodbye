@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.1](https://github.com/tobyzerner/hello-goodbye/compare/v0.2.0...v0.2.1) (2023-06-25)
+
+
+### Bug Fixes
+
+* fix transitions not running reliably ([85c8c24](https://github.com/tobyzerner/hello-goodbye/commit/85c8c24719256e50337f42e5f8d0f64149fad33c))
+
 ## [0.2.0](https://github.com/tobyzerner/hello-goodbye/compare/v0.1.1...v0.2.0) (2023-03-21)
 
 

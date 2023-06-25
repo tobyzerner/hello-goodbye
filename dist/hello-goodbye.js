@@ -1,5 +1,5 @@
-function L(t, r, o = {}) {
-  const n = /* @__PURE__ */ new WeakMap(), i = m(o);
+function y(t, r, a = {}) {
+  const n = /* @__PURE__ */ new WeakMap(), i = v(a);
   t instanceof HTMLCollection && (t = Array.from(t)), t.forEach((e) => {
     getComputedStyle(e).display !== "none" && n.set(e, e.getBoundingClientRect());
   }), r(), t.forEach((e) => {
@@ -9,40 +9,40 @@ function L(t, r, o = {}) {
     const c = s.left - e.getBoundingClientRect().left, u = s.top - e.getBoundingClientRect().top;
     if (!c && !u)
       return;
-    const a = e.style;
-    a.transitionDuration = "0s", a.transform = `translate(${c}px, ${u}px)`, requestAnimationFrame(async () => {
-      e.classList.add(i + "move"), a.transitionDuration = a.transform = "", await d(e), e.classList.remove(i + "move");
+    const o = e.style;
+    o.transitionDuration = "0s", o.transform = `translate(${c}px, ${u}px)`, requestAnimationFrame(async () => {
+      e.classList.add(i + "move"), o.transitionDuration = o.transform = "", await m(e), e.classList.remove(i + "move");
     });
   });
 }
-function v(t) {
+function g(t) {
   t._currentTransition && (t.classList.remove(
     ...["active", "from", "to"].map(
       (r) => t._currentTransition + r
     )
   ), t._currentTransition = null);
 }
-async function f(t, r, o = {}) {
-  const n = m(o) + r + "-", i = t.classList;
-  v(t), t._currentTransition = n, i.add(n + "active", n + "from"), g(), i.add(n + "to"), i.remove(n + "from"), await d(t), i.remove(n + "to", n + "active"), t._currentTransition === n && (t._currentTransition = null);
+async function f(t, r, a = {}) {
+  const n = v(a) + r + "-", i = t.classList;
+  g(t), t._currentTransition = n, i.add(n + "active", n + "from"), await d(), i.add(n + "to"), i.remove(n + "from"), await m(t), i.remove(n + "to", n + "active"), t._currentTransition === n && (t._currentTransition = null);
 }
-function x(t, r = {}) {
+function L(t, r = {}) {
   return f(t, "enter", r);
 }
-function E(t, r = {}) {
+function x(t, r = {}) {
   return f(t, "leave", r);
 }
-function y() {
+function d() {
   return new Promise(
     (t) => requestAnimationFrame(() => requestAnimationFrame(() => t()))
   );
 }
-async function d(t) {
+async function m(t) {
   if (getComputedStyle(t).transitionDuration.startsWith("0s"))
     return;
   let r = !1;
-  const o = () => r = !0;
-  if (t.addEventListener("transitionstart", o), await y(), t.removeEventListener("transitionstart", o), !!r)
+  const a = () => r = !0;
+  if (t.addEventListener("transitionstart", a), await d(), t.removeEventListener("transitionstart", a), !!r)
     return new Promise((n) => {
       const i = () => {
         n(), t.removeEventListener("transitionend", i), t.removeEventListener("transitioncancel", i);
@@ -50,16 +50,13 @@ async function d(t) {
       t.addEventListener("transitionend", i), t.addEventListener("transitioncancel", i);
     });
 }
-function m(t) {
+function v(t) {
   return t != null && t.prefix ? t.prefix + "-" : "";
 }
-function g() {
-  document.body.offsetWidth;
-}
 export {
-  v as cancel,
-  E as goodbye,
-  x as hello,
-  L as move,
+  g as cancel,
+  x as goodbye,
+  L as hello,
+  y as move,
   f as transition
 };
