@@ -67,7 +67,7 @@ export async function transition(
 
     cl.add(prefix + 'active', prefix + 'from');
 
-    forceReflow();
+    await nextFrame();
 
     cl.add(prefix + 'to');
     cl.remove(prefix + 'from');
@@ -116,8 +116,4 @@ async function transitionEnd(el: HTMLElement) {
 
 function getPrefix(options?: TransitionOptions) {
     return options?.prefix ? options.prefix + '-' : '';
-}
-
-function forceReflow(): void {
-    void document.body.offsetWidth;
 }
