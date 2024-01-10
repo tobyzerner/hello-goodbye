@@ -98,13 +98,14 @@ function nextFrame() {
 async function transitionEnd(el: HTMLElement) {
     if (getComputedStyle(el).transitionDuration.startsWith('0s')) return;
     let started = false;
-    const onStart = () => (started = true);
+    const onStart = (e: Event) => (started ||= e.target === el);
     el.addEventListener('transitionstart', onStart);
     await nextFrame();
     el.removeEventListener('transitionstart', onStart);
     if (!started) return;
     return new Promise<void>((resolve) => {
-        const onEnd = () => {
+        const onEnd = (e: Event) => {
+            if (e.target !== el) return;
             resolve();
             el.removeEventListener('transitionend', onEnd);
             el.removeEventListener('transitioncancel', onEnd);

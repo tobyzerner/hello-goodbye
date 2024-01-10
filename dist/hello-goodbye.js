@@ -1,36 +1,36 @@
-function y(t, r, a = {}) {
-  const n = /* @__PURE__ */ new WeakMap(), i = v(a);
-  t instanceof HTMLCollection && (t = Array.from(t)), t.forEach((e) => {
-    getComputedStyle(e).display !== "none" && n.set(e, e.getBoundingClientRect());
-  }), r(), t.forEach((e) => {
-    const s = n.get(e);
+function y(t, i, a = {}) {
+  const n = /* @__PURE__ */ new WeakMap(), e = v(a);
+  t instanceof HTMLCollection && (t = Array.from(t)), t.forEach((r) => {
+    getComputedStyle(r).display !== "none" && n.set(r, r.getBoundingClientRect());
+  }), i(), t.forEach((r) => {
+    const s = n.get(r);
     if (!s)
       return;
-    const c = s.left - e.getBoundingClientRect().left, u = s.top - e.getBoundingClientRect().top;
+    const c = s.left - r.getBoundingClientRect().left, u = s.top - r.getBoundingClientRect().top;
     if (!c && !u)
       return;
-    const o = e.style;
+    const o = r.style;
     o.transitionDuration = "0s", o.transform = `translate(${c}px, ${u}px)`, requestAnimationFrame(async () => {
-      e.classList.add(i + "move"), o.transitionDuration = o.transform = "", await m(e), e.classList.remove(i + "move");
+      r.classList.add(e + "move"), o.transitionDuration = o.transform = "", await m(r), r.classList.remove(e + "move");
     });
   });
 }
 function g(t) {
   t._currentTransition && (t.classList.remove(
     ...["active", "from", "to"].map(
-      (r) => t._currentTransition + r
+      (i) => t._currentTransition + i
     )
   ), t._currentTransition = null);
 }
-async function f(t, r, a = {}) {
-  const n = v(a) + r + "-", i = t.classList;
-  g(t), t._currentTransition = n, i.add(n + "active", n + "from"), await d(), i.add(n + "to"), i.remove(n + "from"), await m(t), i.remove(n + "to", n + "active"), t._currentTransition === n && (t._currentTransition = null);
+async function f(t, i, a = {}) {
+  const n = v(a) + i + "-", e = t.classList;
+  g(t), t._currentTransition = n, e.add(n + "active", n + "from"), await d(), e.add(n + "to"), e.remove(n + "from"), await m(t), e.remove(n + "to", n + "active"), t._currentTransition === n && (t._currentTransition = null);
 }
-function L(t, r = {}) {
-  return f(t, "enter", r);
+function L(t, i = {}) {
+  return f(t, "enter", i);
 }
-function x(t, r = {}) {
-  return f(t, "leave", r);
+function x(t, i = {}) {
+  return f(t, "leave", i);
 }
 function d() {
   return new Promise(
@@ -40,14 +40,14 @@ function d() {
 async function m(t) {
   if (getComputedStyle(t).transitionDuration.startsWith("0s"))
     return;
-  let r = !1;
-  const a = () => r = !0;
-  if (t.addEventListener("transitionstart", a), await d(), t.removeEventListener("transitionstart", a), !!r)
+  let i = !1;
+  const a = (n) => i || (i = n.target === t);
+  if (t.addEventListener("transitionstart", a), await d(), t.removeEventListener("transitionstart", a), !!i)
     return new Promise((n) => {
-      const i = () => {
-        n(), t.removeEventListener("transitionend", i), t.removeEventListener("transitioncancel", i);
+      const e = (r) => {
+        r.target === t && (n(), t.removeEventListener("transitionend", e), t.removeEventListener("transitioncancel", e));
       };
-      t.addEventListener("transitionend", i), t.addEventListener("transitioncancel", i);
+      t.addEventListener("transitionend", e), t.addEventListener("transitioncancel", e);
     });
 }
 function v(t) {
