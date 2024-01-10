@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.2](https://github.com/tobyzerner/hello-goodbye/compare/v0.2.1...v0.2.2) (2024-01-10)
+
+
+### Bug Fixes
+
+* prevent transitions ending early due to transitioning child elements ([789dc79](https://github.com/tobyzerner/hello-goodbye/commit/789dc794046f8979ad8765fefe345d86ea5a0a8d))
+
 ### [0.2.1](https://github.com/tobyzerner/hello-goodbye/compare/v0.2.0...v0.2.1) (2023-06-25)
 
 
